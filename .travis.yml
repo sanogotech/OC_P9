@@ -1,0 +1,10 @@
+addons:
+  sonarcloud:
+    organization: "ccathala"
+    token:
+      secure: "ij1SKj1YIMNsLeeSKV0GSQ03RFBzRzq0hcKnBvTdCfkoj3Jl4b85e/7aa6TuCheK67CNKpIxnj84dYgK6lyufjgAu0htxo1YyhNUybC+LOjRpDB6nhwZnYD5Wh8cgA4OJEAZU4/9jokCJbZHL1kzAOp/NrWGIevKY3AW5BTMhPdiWQY1+y/NWIYUdk487ExN500WYrebFT8M875n04CW4foG7Rw0gbGBxmynporyANV0yrlKgKLb9afaj4w58ZDrq65lSTEq2SwvoMD0/f/+9EPNGMze97t1a7vLV3B2hNuDJGN/OyBxF4Mmknak/wGssLCfozyD3d1soFQi4jRduNkb16BGWdsGe7W9Qq6yGIIVg2jpoHSeGeKs96DoUShaq/yVdodCVTcIrTOWnLMFTBwdAzPvxCw4Et7xgSudigeFWI74ihaR2niYpVQ6EHMuqkxbofpQYuLp36KVOBv3ZEwfqbe2j9kHYj28JaOKYmL8JQzsefWi/m8Sz20sCVGtZWuMizABQXMm5Ir+Owal0qNE97btAZC8PBiHKIeAcUOYyszQdDNDPeY6dZAttzOlo/W0SAxT7JsAUfYV73iRA7V04weZmzgdFpShS84gXB/n/kCyptx3C34+2ry5+cgLGu7OgVu8hma+uvd3cYhKQYOUpOZjqNCy5attkeSYmfg="
+
+script:
+  - cd src 
+  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+  - mvn clean verify sonar:sonar
