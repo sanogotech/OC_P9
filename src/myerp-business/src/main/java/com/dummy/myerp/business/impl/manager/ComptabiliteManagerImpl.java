@@ -96,14 +96,16 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      */
     // TODO tests à compléter
     protected void checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
-        // ===== Vérification des contraintes unitaires sur les attributs de l'écriture
+        /* // ===== Vérification des contraintes unitaires sur les attributs de l'écriture
         Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
         if (!vViolations.isEmpty()) {
             throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
                                           new ConstraintViolationException(
                                               "L'écriture comptable ne respecte pas les contraintes de validation",
                                               vViolations));
-        }
+        } */
+
+        checkEcritureComptableUnitViolations(pEcritureComptable);
 
         // ===== RG_Compta_2 : Pour qu'une écriture comptable soit valide, elle doit être équilibrée
         if (!pEcritureComptable.isEquilibree()) {
@@ -134,6 +136,20 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 
         // TODO ===== RG_Compta_5 : Format et contenu de la référence
         // vérifier que l'année dans la référence correspond bien à la date de l'écriture, idem pour le code journal...
+    }
+
+    /**
+     * Vérification des contraintes unitaires sur les attributs de l'écriture
+     */
+    public Boolean checkEcritureComptableUnitViolations(EcritureComptable pEcritureComptable) throws FunctionalException {
+        Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
+        if (!vViolations.isEmpty()) {
+            throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
+                                          new ConstraintViolationException(
+                                              "L'écriture comptable ne respecte pas les contraintes de validation",
+                                              vViolations));
+        }
+        return true;
     }
 
 

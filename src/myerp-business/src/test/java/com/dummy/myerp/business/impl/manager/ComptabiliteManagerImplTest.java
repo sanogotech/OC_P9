@@ -1,46 +1,70 @@
 package com.dummy.myerp.business.impl.manager;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class ComptabiliteManagerImplTest {
 
-    private ComptabiliteManagerImpl manager = new ComptabiliteManagerImpl();
+    @Mock
+    ComptabiliteManagerImpl classUnderTest;
+    EcritureComptable vEcritureComptable;
 
-
-    @Test
-    @Ignore
-    public void checkEcritureComptableUnit() throws Exception {
-        EcritureComptable vEcritureComptable;
+    @Before
+    public void initBeforeEach() {
+        classUnderTest = new ComptabiliteManagerImpl();
         vEcritureComptable = new EcritureComptable();
         vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
         vEcritureComptable.setDate(new Date());
         vEcritureComptable.setLibelle("Libelle");
-        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(1),
-                                                                                 null, new BigDecimal(123),
-                                                                                 null));
-        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(2),
-                                                                                 null, null,
-                                                                                 new BigDecimal(123)));
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        vEcritureComptable.getListLigneEcriture()
+                .add(new LigneEcritureComptable(new CompteComptable(1), null, new BigDecimal(123), null));
+        vEcritureComptable.getListLigneEcriture()
+                .add(new LigneEcritureComptable(new CompteComptable(2), null, null, new BigDecimal(123)));
+        vEcritureComptable.setReference("AC-2016/00001");
     }
 
-    @Test(expected = FunctionalException.class)
-    @Ignore
-    public void checkEcritureComptableUnitViolation() throws Exception {
-        EcritureComptable vEcritureComptable;
-        vEcritureComptable = new EcritureComptable();
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+    @After
+    public void undefAfterEach() {
+        classUnderTest = null;
+        vEcritureComptable = null;
     }
+
+    @Test
+    @Ignore
+    public void checkEcritureComptableUnit() throws Exception {
+        classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
+    }
+
+    /*
+     * @Test(expected = FunctionalException.class)
+     * 
+     * @Ignore public void checkEcritureComptableUnitViolation() throws Exception {
+     * EcritureComptable vEcritureComptable; vEcritureComptable = new
+     * EcritureComptable();
+     * classUnderTest.checkEcritureComptableUnit(vEcritureComptable); }
+     */
 
     @Test(expected = FunctionalException.class)
     @Ignore
@@ -50,13 +74,11 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
         vEcritureComptable.setDate(new Date());
         vEcritureComptable.setLibelle("Libelle");
-        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(1),
-                                                                                 null, new BigDecimal(123),
-                                                                                 null));
-        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(2),
-                                                                                 null, null,
-                                                                                 new BigDecimal(1234)));
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        vEcritureComptable.getListLigneEcriture()
+                .add(new LigneEcritureComptable(new CompteComptable(1), null, new BigDecimal(123), null));
+        vEcritureComptable.getListLigneEcriture()
+                .add(new LigneEcritureComptable(new CompteComptable(2), null, null, new BigDecimal(1234)));
+        classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     @Test(expected = FunctionalException.class)
@@ -67,13 +89,103 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
         vEcritureComptable.setDate(new Date());
         vEcritureComptable.setLibelle("Libelle");
-        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(1),
-                                                                                 null, new BigDecimal(123),
-                                                                                 null));
-        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(1),
-                                                                                 null, new BigDecimal(123),
-                                                                                 null));
-        manager.checkEcritureComptableUnit(vEcritureComptable);
+        vEcritureComptable.getListLigneEcriture()
+                .add(new LigneEcritureComptable(new CompteComptable(1), null, new BigDecimal(123), null));
+        vEcritureComptable.getListLigneEcriture()
+                .add(new LigneEcritureComptable(new CompteComptable(1), null, new BigDecimal(123), null));
+        classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
+    }
+
+    /*
+     * public void addReferenceTest() { // GIVEN EcritureComptable ecritureComptable
+     * = new EcritureComptable(); ecritureComptable.setJournal(new
+     * JournalComptable("CC", "Achat fournitures"));
+     * ecritureComptable.setDate(Calendar.getInstance().getTime());
+     * 
+     * ComptabiliteManager comptabiliteManager= new ComptabiliteManagerImpl();
+     * 
+     * int journalRecordCount = 5; // WHEN
+     * 
+     * // THEN
+     * 
+     * }
+     */
+
+    @Test
+    public void Given_validEcritureComptable_When_checkEcritureComptableUnitViolationsIsUsed_Then_shouldReturnTrue()
+            throws FunctionalException {
+
+        // WHEN
+        Boolean result = classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+
+        // THEN
+        assertThat(result).isTrue();
+    }
+
+    @Test(expected = FunctionalException.class)
+    public void Given_ecritureComptableWithJournalComptableEqualNull_When_checkEcritureComptableUnitViolationsIsUsed_Then_shouldThrowsFunctionalException()
+            throws FunctionalException {
+        // GIVEN
+        vEcritureComptable.setJournal(null);
+        // WHEN
+        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+    }
+
+    @Test(expected = FunctionalException.class)
+    public void Given_ecritureComptableWithReferenceEqual0_When_checkEcritureComptableUnitViolationsIsUsed_Then_shouldThrowsFunctionalException()
+            throws FunctionalException {
+        // GIVEN
+        vEcritureComptable.setReference("0");
+        // WHEN
+        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+    }
+
+    @Test(expected = FunctionalException.class)
+    public void Given_ecritureComptableWithDateEqualNull_When_checkEcritureComptableUnitViolationsIsUsed_Then_shouldThrowsFunctionalException()
+            throws FunctionalException {
+        // GIVEN
+        vEcritureComptable.setDate(null);
+        // WHEN
+        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+    }
+
+    @Test(expected = FunctionalException.class)
+    public void Given_ecritureComptableWithLibelleEqualNull_When_checkEcritureComptableUnitViolationsIsUsed_Then_shouldThrowsFunctionalException()
+            throws FunctionalException {
+        // GIVEN
+        vEcritureComptable.setLibelle(null);
+        ;
+        // WHEN
+        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+    }
+
+    @Test(expected = FunctionalException.class)
+    public void Given_ecritureComptableWithLibelleEqualEmpty_When_checkEcritureComptableUnitViolationsIsUsed_Then_shouldThrowsFunctionalException()
+            throws FunctionalException {
+        // GIVEN
+        vEcritureComptable.setLibelle(
+                "");
+        // WHEN
+        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+    }
+
+    @Test(expected = FunctionalException.class)
+    public void Given_ecritureComptableWithLibelleSizeIsGreaterThan200Empty_When_checkEcritureComptableUnitViolationsIsUsed_Then_shouldThrowsFunctionalException()
+            throws FunctionalException {
+        // GIVEN
+        vEcritureComptable.setLibelle(
+                "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+        // WHEN
+        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+    }
+
+    @Test(expected = FunctionalException.class)
+    public void Given_ecritureComptableWithOneLigneComptable_When_checkEcritureComptableUnitViolationsIsUsed_Then_shouldThrowsFunctionalException()
+            throws FunctionalException {
+        // GIVEN
+        vEcritureComptable.getListLigneEcriture().remove(1);
+        // WHEN
+        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
     }
 
 }
