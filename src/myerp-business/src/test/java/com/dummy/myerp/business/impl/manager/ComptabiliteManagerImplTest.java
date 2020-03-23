@@ -1,33 +1,22 @@
 package com.dummy.myerp.business.impl.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 
-import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ComptabiliteManagerImplTest {
 
-    @Mock
     ComptabiliteManagerImpl classUnderTest;
     EcritureComptable vEcritureComptable;
 
