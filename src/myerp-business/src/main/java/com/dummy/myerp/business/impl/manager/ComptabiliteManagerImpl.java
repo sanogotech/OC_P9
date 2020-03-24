@@ -95,22 +95,21 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      * @throws FunctionalException Si l'Ecriture comptable ne respecte pas les règles de gestion
      */
     // TODO tests à compléter
-    protected void checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
-        /* // ===== Vérification des contraintes unitaires sur les attributs de l'écriture
+    protected Boolean checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
+        // ===== Vérification des contraintes unitaires sur les attributs de l'écriture
         Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
         if (!vViolations.isEmpty()) {
             throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
                                           new ConstraintViolationException(
                                               "L'écriture comptable ne respecte pas les contraintes de validation",
                                               vViolations));
-        } */
+        }
 
-        checkEcritureComptableUnitViolations(pEcritureComptable);
-
-        // ===== RG_Compta_2 : Pour qu'une écriture comptable soit valide, elle doit être équilibrée
+        
+       /*  // ===== RG_Compta_2 : Pour qu'une écriture comptable soit valide, elle doit être équilibrée
         if (!pEcritureComptable.isEquilibree()) {
             throw new FunctionalException("L'écriture comptable n'est pas équilibrée.");
-        }
+        } 
 
         // ===== RG_Compta_3 : une écriture comptable doit avoir au moins 2 lignes d'écriture (1 au débit, 1 au crédit)
         int vNbrCredit = 0;
@@ -132,26 +131,15 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
             || vNbrDebit < 1) {
             throw new FunctionalException(
                 "L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
-        }
+        } */
 
         // TODO ===== RG_Compta_5 : Format et contenu de la référence
         // vérifier que l'année dans la référence correspond bien à la date de l'écriture, idem pour le code journal...
-    }
 
-    /**
-     * Vérification des contraintes unitaires sur les attributs de l'écriture
-     */
-    public Boolean checkEcritureComptableUnitViolations(EcritureComptable pEcritureComptable) throws FunctionalException {
-        Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
-        if (!vViolations.isEmpty()) {
-            throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
-                                          new ConstraintViolationException(
-                                              "L'écriture comptable ne respecte pas les contraintes de validation",
-                                              vViolations));
-        }
         return true;
     }
 
+    
 
     /**
      * Vérifie que l'Ecriture comptable respecte les règles de gestion liées au contexte

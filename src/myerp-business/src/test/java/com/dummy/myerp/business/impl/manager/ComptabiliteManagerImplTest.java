@@ -105,7 +105,7 @@ public class ComptabiliteManagerImplTest {
             throws FunctionalException {
 
         // WHEN
-        Boolean result = classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+        Boolean result = classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
 
         // THEN
         assertThat(result).isTrue();
@@ -117,7 +117,7 @@ public class ComptabiliteManagerImplTest {
         // GIVEN
         vEcritureComptable.setJournal(null);
         // WHEN
-        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+        classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     @Test(expected = FunctionalException.class)
@@ -126,7 +126,7 @@ public class ComptabiliteManagerImplTest {
         // GIVEN
         vEcritureComptable.setReference("0");
         // WHEN
-        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+        classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     @Test(expected = FunctionalException.class)
@@ -135,7 +135,7 @@ public class ComptabiliteManagerImplTest {
         // GIVEN
         vEcritureComptable.setDate(null);
         // WHEN
-        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+        classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     @Test(expected = FunctionalException.class)
@@ -145,7 +145,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.setLibelle(null);
         ;
         // WHEN
-        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+        classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     @Test(expected = FunctionalException.class)
@@ -155,7 +155,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.setLibelle(
                 "");
         // WHEN
-        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+        classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     @Test(expected = FunctionalException.class)
@@ -165,7 +165,7 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.setLibelle(
                 "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
         // WHEN
-        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+        classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
     }
 
     @Test(expected = FunctionalException.class)
@@ -174,7 +174,7 @@ public class ComptabiliteManagerImplTest {
         // GIVEN
         vEcritureComptable.getListLigneEcriture().remove(1);
         // WHEN
-        classUnderTest.checkEcritureComptableUnitViolations(vEcritureComptable);
+        classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
     }
 
 }

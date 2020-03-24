@@ -11,4 +11,4 @@ addons:
 script:
   - cd src 
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean verify sonar:sonar -Dsonar.projectKey=ccathala_OC_P9
+  - mvn clean verify sonar:sonar -Ptest-business,test-consumer -Dsonar.projectKey=ccathala_OC_P9
