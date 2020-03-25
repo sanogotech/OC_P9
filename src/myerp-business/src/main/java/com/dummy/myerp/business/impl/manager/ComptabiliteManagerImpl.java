@@ -1,6 +1,8 @@
 package com.dummy.myerp.business.impl.manager;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -97,20 +99,41 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     // TODO tests à compléter
     protected Boolean checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
         // ===== Vérification des contraintes unitaires sur les attributs de l'écriture
+        checkEcritureComptableValidation(pEcritureComptable);
+
+       // ===== RG_Compta_2 : Pour qu'une écriture comptable soit valide, elle doit être équilibrée
+       checkEcritureComptableEquilibre((pEcritureComptable));
+
+       // ===== RG_Compta_3 : une écriture comptable doit avoir au moins 2 lignes d'écriture (1 au débit, 1 au crédit)
+       checkEcritureComptableLines(pEcritureComptable);
+
+        // TODO ===== RG_Compta_5 : Format et contenu de la référence
+        // vérifier que l'année dans la référence correspond bien à la date de l'écriture, idem pour le code journal...
+        checkReference(pEcritureComptable);
+        return true;
+    }
+
+    protected Boolean  checkEcritureComptableValidation(EcritureComptable pEcritureComptable) throws FunctionalException {
+        // ===== Vérification des contraintes unitaires sur les attributs de l'écriture
         Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
         if (!vViolations.isEmpty()) {
             throw new FunctionalException("L'écriture comptable ne respecte pas les règles de gestion.",
-                                          new ConstraintViolationException(
-                                              "L'écriture comptable ne respecte pas les contraintes de validation",
-                                              vViolations));
+                    new ConstraintViolationException(
+                            "L'écriture comptable ne respecte pas les contraintes de validation",
+                            vViolations));
         }
+        return true;
+    }
 
-        
-       /*  // ===== RG_Compta_2 : Pour qu'une écriture comptable soit valide, elle doit être équilibrée
+    protected Boolean checkEcritureComptableEquilibre(EcritureComptable pEcritureComptable) throws FunctionalException {
+        // ===== RG_Compta_2 : Pour qu'une écriture comptable soit valide, elle doit être équilibrée
         if (!pEcritureComptable.isEquilibree()) {
             throw new FunctionalException("L'écriture comptable n'est pas équilibrée.");
-        } 
+        }
+        return true;
+    }
 
+    protected Boolean checkEcritureComptableLines(EcritureComptable pEcritureComptable) throws FunctionalException {
         // ===== RG_Compta_3 : une écriture comptable doit avoir au moins 2 lignes d'écriture (1 au débit, 1 au crédit)
         int vNbrCredit = 0;
         int vNbrDebit = 0;
@@ -131,13 +154,34 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
             || vNbrDebit < 1) {
             throw new FunctionalException(
                 "L'écriture comptable doit avoir au moins deux lignes : une ligne au débit et une ligne au crédit.");
-        } */
-
-        // TODO ===== RG_Compta_5 : Format et contenu de la référence
-        // vérifier que l'année dans la référence correspond bien à la date de l'écriture, idem pour le code journal...
-
+        }
         return true;
-    }
+        }
+
+    // vérifier que l'année dans la référence correspond bien à la date de l'écriture, idem pour le code journal...
+        protected Boolean checkReference(EcritureComptable pEcritureComptable) throws FunctionalException {
+
+            String[] refSplit = pEcritureComptable.getReference().split("-|/");
+            String extractedCode = refSplit[0];
+            String extractedYear = refSplit[1];
+
+            String code = pEcritureComptable.getJournal().getCode();
+            Calendar now = Calendar.getInstance();
+            int year = now.get(Calendar.YEAR);
+            String yearInString = String.valueOf(year);
+
+            if (!code.equals(extractedCode)) {
+                throw new FunctionalException(
+                        "La référence de l'écriture comptable doit contenir le code correspondant au journal associé.");
+            }
+
+            if (!yearInString.equals(extractedYear)) {
+                throw new FunctionalException(
+                        "La référence de l'écriture comptable doit contenir l'année courante.");
+            }
+
+            return true;
+        }
 
     
 
