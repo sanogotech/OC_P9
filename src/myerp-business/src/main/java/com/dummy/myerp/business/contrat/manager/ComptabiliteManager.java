@@ -5,6 +5,7 @@ import java.util.List;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 
 
@@ -82,4 +83,25 @@ public interface ComptabiliteManager {
      * @param pId l'id de l'écriture
      */
     void deleteEcritureComptable(Integer pId);
+
+    /**
+     * Renvoie la valeur de la dernière séquence de l'écriture comptable ciblée correspondante au code journal et à l'annnée.
+     *
+     * @return {@link int}
+     */
+    int getSequenceEcritureComptableLastValue(String codeJournal, String year);
+
+    /**
+     * Insert une nouvelle séquence d'écriture comptable.
+     *
+     * @param pSequenceEcritureComptable
+     */
+    void insertSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
+
+    /**
+     * Met à jour la séquence d'écriture comptable.
+     *
+     * @param pSequenceEcritureComptable
+     */
+    void updateSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.SequenceEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
 
@@ -25,6 +26,8 @@ public interface ComptabiliteDao {
      * @return {@link List}
      */
     List<JournalComptable> getListJournalComptable();
+
+
 
 
     // ==================== EcritureComptable ====================
@@ -80,4 +83,18 @@ public interface ComptabiliteDao {
      * @param pId l'id de l'écriture
      */
     void deleteEcritureComptable(Integer pId);
+
+
+    // ==================== SequenceEcritureComptable ====================
+
+    /**
+     * Renvoie la valeur de la séquence correspondante au code journal et à l'annnée.
+     *
+     * @return {@link int}
+     */
+    int getSequenceEcritureComptableLastValue(String codeJournal, String year);
+
+    void insertSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
+
+    void updateSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
 }

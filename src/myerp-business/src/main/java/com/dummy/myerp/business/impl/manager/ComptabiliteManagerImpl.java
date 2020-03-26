@@ -8,15 +8,12 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import com.dummy.myerp.model.bean.comptabilite.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.TransactionStatus;
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
-import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
-import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
-import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
-import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
@@ -76,6 +73,36 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
                 4.  Enregistrer (insert/update) la valeur de la séquence en persitance
                     (table sequence_ecriture_comptable)
          */
+
+        // Set attributes
+        String codeJournal = pEcritureComptable.getJournal().getCode();
+        Calendar now = Calendar.getInstance();
+        int year = now.get(Calendar.YEAR);
+        String yearInString = String.valueOf(year);
+        int sequenceEcritureComptableUpdatedValue = 0;
+
+        // Get SequenceEcritureComptable last value according to parameters
+        int sequenceEcritureComptableLastValue = getSequenceEcritureComptableLastValue(codeJournal, yearInString);
+
+        // Check if a sequence already exist then set sequenceEcritureComptableUpdatedValue
+        if (sequenceEcritureComptableLastValue > 0){
+            sequenceEcritureComptableUpdatedValue = sequenceEcritureComptableLastValue +1;
+        }else {
+            sequenceEcritureComptableUpdatedValue = 1;
+        }
+
+        // Update reference
+        pEcritureComptable.setReference(codeJournal + "-" + yearInString + "/" + String.format("%05d", sequenceEcritureComptableUpdatedValue));
+
+        // Persist sequence insert/update
+        if (sequenceEcritureComptableLastValue > 0){
+            // Sequence already exist then update the sequence
+            updateSequenceEcritureComptable(codeJournal, new SequenceEcritureComptable(year, sequenceEcritureComptableUpdatedValue));
+        }else {
+            // Sequence doesn't exist then insert a new sequence
+            insertSequenceEcritureComptable(codeJournal, new SequenceEcritureComptable(year, sequenceEcritureComptableUpdatedValue));
+        }
+
     }
 
     /**
@@ -158,7 +185,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         return true;
         }
 
-    // vérifier que l'année dans la référence correspond bien à la date de l'écriture, idem pour le code journal...
+        // vérifier que l'année dans la référence correspond bien à la date de l'écriture, idem pour le code journal...
         protected Boolean checkReference(EcritureComptable pEcritureComptable) throws FunctionalException {
 
             String[] refSplit = pEcritureComptable.getReference().split("-|/");
@@ -252,6 +279,35 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
         try {
             getDaoProxy().getComptabiliteDao().deleteEcritureComptable(pId);
+            getTransactionManager().commitMyERP(vTS);
+            vTS = null;
+        } finally {
+            getTransactionManager().rollbackMyERP(vTS);
+        }
+    }
+
+    @Override
+    public int getSequenceEcritureComptableLastValue(String codeJournal, String year) {
+        return getDaoProxy().getComptabiliteDao().getSequenceEcritureComptableLastValue(codeJournal,year);
+    }
+
+    @Override
+    public void insertSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable) {
+        TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
+        try {
+            getDaoProxy().getComptabiliteDao().insertSequenceEcritureComptable(codeJournal, pSequenceEcritureComptable);
+            getTransactionManager().commitMyERP(vTS);
+            vTS = null;
+        } finally {
+            getTransactionManager().rollbackMyERP(vTS);
+        }
+    }
+
+    @Override
+    public void updateSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable) {
+        TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
+        try {
+            getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(codeJournal, pSequenceEcritureComptable);
             getTransactionManager().commitMyERP(vTS);
             vTS = null;
         } finally {
