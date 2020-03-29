@@ -4,6 +4,7 @@ import java.sql.Types;
 import java.util.List;
 
 import com.dummy.myerp.model.bean.comptabilite.*;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -298,14 +299,19 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     @Override
-    public void insertSequenceEcritureComptable(String codeJournal ,SequenceEcritureComptable pSequenceEcritureComptable) {
+    public int insertSequenceEcritureComptable(String codeJournal , SequenceEcritureComptable pSequenceEcritureComptable) {
         NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("journal_code", codeJournal);
         vSqlParams.addValue("annee", pSequenceEcritureComptable.getAnnee());
         vSqlParams.addValue("derniere_valeur", pSequenceEcritureComptable.getDerniereValeur());
 
-        vJdbcTemplate.update(SQLinsertSequenceEcritureComptable, vSqlParams);
+        try{
+            return vJdbcTemplate.update(SQLinsertSequenceEcritureComptable, vSqlParams);
+        } catch (DataAccessException e){
+            return 0;
+        }
+
     }
 
     // ==================== SequenceEcritureComptable - Update ====================
@@ -317,14 +323,18 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     @Override
-    public void updateSequenceEcritureComptable(String codeJournal ,SequenceEcritureComptable pSequenceEcritureComptable) {
+    public int updateSequenceEcritureComptable(String codeJournal , SequenceEcritureComptable pSequenceEcritureComptable) {
         NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("journal_code", codeJournal);
         vSqlParams.addValue("annee", pSequenceEcritureComptable.getAnnee());
         vSqlParams.addValue("derniere_valeur", pSequenceEcritureComptable.getDerniereValeur());
+        try{
+            return vJdbcTemplate.update(SQLupdateSequenceEcritureComptable, vSqlParams);
+        } catch (DataAccessException e){
+            return 0;
+        }
 
-        vJdbcTemplate.update(SQLupdateSequenceEcritureComptable, vSqlParams);
     }
 
 

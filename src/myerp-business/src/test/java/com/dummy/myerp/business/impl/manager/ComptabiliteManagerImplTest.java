@@ -1,21 +1,24 @@
 package com.dummy.myerp.business.impl.manager;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.dummy.myerp.business.impl.AbstractBusinessManager;
+import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
+import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
+import com.dummy.myerp.consumer.dao.impl.DaoProxyImpl;
+import com.dummy.myerp.model.bean.comptabilite.*;
+import com.dummy.myerp.technical.exception.NotFoundException;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
-import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
-import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
-import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -45,6 +48,8 @@ public class ComptabiliteManagerImplTest {
         vEcritureComptable.getListLigneEcriture()
                 .add(new LigneEcritureComptable(new CompteComptable(2), null, null, new BigDecimal(123)));
         vEcritureComptable.setReference("AC-2016/00001");
+
+
     }
 
     @After
@@ -59,13 +64,13 @@ public class ComptabiliteManagerImplTest {
      * = new EcritureComptable(); ecritureComptable.setJournal(new
      * JournalComptable("CC", "Achat fournitures"));
      * ecritureComptable.setDate(Calendar.getInstance().getTime());
-     * 
+     *
      * ComptabiliteManager comptabiliteManager= new ComptabiliteManagerImpl();
-     * 
+     *
      * int journalRecordCount = 5; // WHEN
-     * 
+     *
      * // THEN
-     * 
+     *
      * }
      */
 
@@ -386,4 +391,128 @@ public class ComptabiliteManagerImplTest {
         assertThat(thrownMessage).isEqualTo(expectedMessage);
     }
 
+    /*==========================================================================*/
+    /*         setSequenceEcritureComptableUpdatedValue unit tests              */
+    /*==========================================================================*/
+
+    @Test
+    public void Given_actualSequenceValueEquals0_When_setSequenceEcritureComptableUpdatedValueIsUsed_Then_shouldReturn1() {
+        // GIVEN
+        int sequenceValue = 0;
+        // WHEN
+        final int result = classUnderTest.setSequenceEcritureComptableUpdatedValue(sequenceValue);
+        // THEN
+        assertThat(result).isEqualTo(1);
     }
+
+    @Test
+    public void Given_actualSequenceValueEquals50_When_setSequenceEcritureComptableUpdatedValueIsUsed_Then_shouldReturn51() {
+        // GIVEN
+        int sequenceValue = 50;
+        // WHEN
+        final int result = classUnderTest.setSequenceEcritureComptableUpdatedValue(sequenceValue);
+        // THEN
+        assertThat(result).isEqualTo(51);
+    }
+
+    /*==========================================================================*/
+    /*             createEcritureComptableReference unit tests                  */
+    /*==========================================================================*/
+
+    @Test
+    public void Given_sequenceValueEquals1_When_createEcritureComptableReferenceIsUsed_Then_shouldReturn00001() {
+        // GIVEN
+        int sequenceValue = 1;
+        String codeJOurnal = "AB";
+        String yearInString = "2020";
+        // WHEN
+        final String result = classUnderTest.createEcritureComptableReference(codeJOurnal,yearInString,sequenceValue);
+        // THEN
+        assertThat(result).isEqualTo("AB-2020/00001");
+
+    }
+
+    @Test
+    public void Given_sequenceValueEquals99999_When_createEcritureComptableReferenceIsUsed_Then_shouldReturn99999() {
+        // GIVEN
+        int sequenceValue = 99999;
+        String codeJOurnal = "AB";
+        String yearInString = "2020";
+        // WHEN
+        final String result = classUnderTest.createEcritureComptableReference(codeJOurnal,yearInString,sequenceValue);
+        // THEN
+        assertThat(result).isEqualTo("AB-2020/99999");
+    }
+
+    /*==========================================================================*/
+    /*          persistSequenceEcritureComptableValue unit tests                */
+    /*==========================================================================*/
+
+    @Test
+    public void Given_actualSequenceValue0_When_persistSequenceEcritureComptableValueIsUsed_Then_shouldReturn1() {
+        // GIVEN
+        int sequenceValue = 0;
+        String codeJournal = "AB";
+        int year = 2020;
+
+        MockitoAnnotations.initMocks(this);
+        when(classUnderTest.insertSequenceEcritureComptable(anyString(), any(SequenceEcritureComptable.class))).thenReturn(1);
+        when(classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,1,codeJournal, year)).thenCallRealMethod();
+        // WHEN
+        final int result = classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,1,codeJournal, new Integer(year));
+        // THEN
+        assertThat(result).isEqualTo(1);
+
+    }
+
+    @Test
+    public void Given_actualSequenceValue1_When_persistSequenceEcritureComptableValueIsUsed_Then_shouldReturn1() {
+        // GIVEN
+        int sequenceValue = 1;
+        String codeJournal = "AB";
+        int year = 2020;
+
+        MockitoAnnotations.initMocks(this);
+        when(classUnderTest.updateSequenceEcritureComptable(anyString(), any(SequenceEcritureComptable.class))).thenReturn(1);
+        when(classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,1,codeJournal, year)).thenCallRealMethod();
+        // WHEN
+        final int result = classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,1,codeJournal, new Integer(year));
+        // THEN
+        assertThat(result).isEqualTo(1);
+
+    }
+
+    /*==========================================================================*/
+    /*              checkEcritureComptableContext unit tests                    */
+    /*==========================================================================*/
+
+
+
+    @Test(expected = FunctionalException.class)
+    public void Given_EcritureComptableIDIsNull_When_checkEcritureComptableContextIsUsed_Then_shouldThrowFunctionnalException() throws FunctionalException {
+        // GIVEN
+        MockitoAnnotations.initMocks(this);
+        when(vEcritureComptable.getReference()).thenReturn("test");
+        when(vEcritureComptable.getId()).thenReturn(null);
+        doCallRealMethod().when(classUnderTest).checkEcritureComptableContext(vEcritureComptable);
+        // WHEN
+        classUnderTest.checkEcritureComptableContext(vEcritureComptable);
+
+    }
+
+    @Test(expected = FunctionalException.class)
+    public void Given_EcritureComptableIDIsTheSameAsTheIdRecordedInDBForTheSameRef_When_checkEcritureComptableContextIsUsed_Then_shouldThrowFunctionnalException() throws FunctionalException, NotFoundException {
+        // GIVEN
+        MockitoAnnotations.initMocks(this);
+        EcritureComptable eCFromDb = new EcritureComptable();
+        eCFromDb.setId(1);
+        when(vEcritureComptable.getReference()).thenReturn("test");
+        when(vEcritureComptable.getId()).thenReturn(2);
+        when(classUnderTest.getEcritureComptableByRef(vEcritureComptable)).thenReturn(eCFromDb);
+        doCallRealMethod().when(classUnderTest).checkEcritureComptableContext(vEcritureComptable);
+        // WHEN
+        classUnderTest.checkEcritureComptableContext(vEcritureComptable);
+
+    }
+
+}

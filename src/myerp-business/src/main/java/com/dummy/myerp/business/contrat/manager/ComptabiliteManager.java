@@ -50,8 +50,9 @@ public interface ComptabiliteManager {
      *
      * <p><strong>Attention :</strong> l'écriture n'est pas enregistrée en persistance</p>
      * @param pEcritureComptable L'écriture comptable concernée
+     * @return
      */
-    void addReference(EcritureComptable pEcritureComptable);
+    int addReference(EcritureComptable pEcritureComptable);
 
     /**
      * Vérifie que l'Ecriture comptable respecte les règles de gestion.
@@ -95,13 +96,15 @@ public interface ComptabiliteManager {
      * Insert une nouvelle séquence d'écriture comptable.
      *
      * @param pSequenceEcritureComptable
+     * @return
      */
-    void insertSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
+    int insertSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
 
     /**
      * Met à jour la séquence d'écriture comptable.
      *
      * @param pSequenceEcritureComptable
+     * @return
      */
-    void updateSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
+    int updateSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
 }
