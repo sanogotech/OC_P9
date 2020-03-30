@@ -24,32 +24,50 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComptabiliteManagerImplTest {
 
-    @Mock
+    @Spy
     ComptabiliteManagerImpl classUnderTest;
     @Mock
     EcritureComptable vEcritureComptable;
+    @Mock
+    JournalComptable vJournalComptable;
+
+    int year =0;
+    String yearInString = null;
 
     @Before
     public void initBeforeEach() {
         classUnderTest = new ComptabiliteManagerImpl();
         vEcritureComptable = new EcritureComptable();
 
+        // Set current year
+        Calendar now = Calendar.getInstance();
+        year = now.get(Calendar.YEAR);
+        yearInString = String.valueOf(year);
+
+        vEcritureComptable = createValidEcritureComptable(yearInString);
+
+    }
+
+    public EcritureComptable createValidEcritureComptable(String yearInString) {
+        EcritureComptable ecritureComptable = new EcritureComptable();
+
         // Set valid EcritureComptable
-        vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
-        vEcritureComptable.setDate(new Date());
-        vEcritureComptable.setLibelle("Libelle");
-        vEcritureComptable.getListLigneEcriture()
+        ecritureComptable.setJournal(new JournalComptable("AC", "Achat"));
+        ecritureComptable.setDate(new Date());
+        ecritureComptable.setLibelle("Libelle");
+        ecritureComptable.getListLigneEcriture()
                 .add(new LigneEcritureComptable(new CompteComptable(1), null, new BigDecimal(123), null));
-        vEcritureComptable.getListLigneEcriture()
+        ecritureComptable.getListLigneEcriture()
                 .add(new LigneEcritureComptable(new CompteComptable(2), null, null, new BigDecimal(123)));
-        vEcritureComptable.setReference("AC-2016/00001");
+        ecritureComptable.setReference("AC-" + yearInString + "/00001");
 
-
+        return ecritureComptable;
     }
 
     @After
@@ -75,14 +93,32 @@ public class ComptabiliteManagerImplTest {
      */
 
     @Test
-    public void Given_validEcritureComptable_When_checkEcritureComptableUnitIsUsed_Then_shouldReturnTrue() throws FunctionalException {
+    public void Given_validEcritureComptable_When_addReferenceIsUsed_Then_verifiySubMethodsCalls() {
         // GIVEN
         MockitoAnnotations.initMocks(this);
-        when(classUnderTest.checkEcritureComptableValidation(vEcritureComptable)).thenReturn(true);
-        when(classUnderTest.checkEcritureComptableEquilibre(vEcritureComptable)).thenReturn(true);
-        when(classUnderTest.checkEcritureComptableLines(vEcritureComptable)).thenReturn(true);
-        when(classUnderTest.checkReference(vEcritureComptable)).thenReturn(true);
-        when(classUnderTest.checkEcritureComptableUnit(vEcritureComptable)).thenCallRealMethod();
+        when(vEcritureComptable.getJournal()).thenReturn(vJournalComptable);
+        when(vJournalComptable.getCode()).thenReturn("ABC");
+        doReturn(5).when(classUnderTest).getSequenceEcritureComptableLastValue(anyString(), anyString());
+        doReturn(6).when(classUnderTest).setSequenceEcritureComptableUpdatedValue(anyInt());
+        doNothing().when(vEcritureComptable).setReference(anyString());
+        doReturn(1).when(classUnderTest).persistSequenceEcritureComptableValue(anyInt(), anyInt(),anyString(), any(Integer.class));
+        // WHEN
+        classUnderTest.addReference(vEcritureComptable);
+        // THEN
+        verify(classUnderTest, times(1)).getSequenceEcritureComptableLastValue(anyString(), anyString());
+        verify(classUnderTest, times(1)).setSequenceEcritureComptableUpdatedValue(anyInt());
+        verify(classUnderTest, times(1)).persistSequenceEcritureComptableValue(anyInt(), anyInt(), anyString(),anyInt());
+        verify(vEcritureComptable, times(1)).setReference(anyString());
+    }
+
+
+
+
+
+    @Test
+    public void Given_validEcritureComptable_When_checkEcritureComptableUnitIsUsed_Then_shouldReturnTrue() throws FunctionalException {
+        // GIVEN
+
         // WHEN
         final Boolean result = classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
         // THEN
@@ -94,7 +130,7 @@ public class ComptabiliteManagerImplTest {
         // GIVEN
         MockitoAnnotations.initMocks(this);
         when(classUnderTest.checkEcritureComptableValidation(vEcritureComptable)).thenThrow(FunctionalException.class);
-        when(classUnderTest.checkEcritureComptableUnit(vEcritureComptable)).thenCallRealMethod();
+        /*when(classUnderTest.checkEcritureComptableUnit(vEcritureComptable)).thenCallRealMethod();*/
         // WHEN
         classUnderTest.checkEcritureComptableUnit(vEcritureComptable);
     }
@@ -225,7 +261,7 @@ public class ComptabiliteManagerImplTest {
         // GIVEN
         MockitoAnnotations.initMocks(this);
         when(vEcritureComptable.isEquilibree()).thenReturn(true);
-        when(classUnderTest.checkEcritureComptableEquilibre(vEcritureComptable)).thenCallRealMethod();
+        /*when(classUnderTest.checkEcritureComptableEquilibre(vEcritureComptable)).thenCallRealMethod();*/
         // WHEN
         final Boolean result = classUnderTest.checkEcritureComptableEquilibre(vEcritureComptable);
         // THEN
@@ -238,7 +274,7 @@ public class ComptabiliteManagerImplTest {
         // GIVEN
         MockitoAnnotations.initMocks(this);
         when(vEcritureComptable.isEquilibree()).thenReturn(false);
-        when(classUnderTest.checkEcritureComptableEquilibre(vEcritureComptable)).thenCallRealMethod();
+        /*when(classUnderTest.checkEcritureComptableEquilibre(vEcritureComptable)).thenCallRealMethod();*/
         // WHEN
         classUnderTest.checkEcritureComptableEquilibre(vEcritureComptable);
     }
@@ -248,7 +284,7 @@ public class ComptabiliteManagerImplTest {
         // GIVEN
         MockitoAnnotations.initMocks(this);
         when(vEcritureComptable.isEquilibree()).thenReturn(false);
-        when(classUnderTest.checkEcritureComptableEquilibre(vEcritureComptable)).thenCallRealMethod();
+        /*when(classUnderTest.checkEcritureComptableEquilibre(vEcritureComptable)).thenCallRealMethod();*/
 
         String expectedMessage = "L'écriture comptable n'est pas équilibrée.";
         String thrownMessage = null;
@@ -371,6 +407,8 @@ public class ComptabiliteManagerImplTest {
 
     @Test(expected = FunctionalException.class)
     public void Given_invalidReferenceYearDoesNotMatch_When_checkReferenceIsUsed_Then_shouldthrowFunctionnalException() throws FunctionalException {
+        // GIVEN
+        vEcritureComptable.getJournal().setCode("DEF");
         // WHEN
         classUnderTest.checkReference(vEcritureComptable);
 
@@ -381,6 +419,7 @@ public class ComptabiliteManagerImplTest {
         // GIVEN
         String expectedMessage = "La référence de l'écriture comptable doit contenir l'année courante.";
         String thrownMessage = null;
+        vEcritureComptable.setReference("AC-2016/00001");
         // WHEN
         try {
             classUnderTest.checkReference(vEcritureComptable);
@@ -456,8 +495,7 @@ public class ComptabiliteManagerImplTest {
         int year = 2020;
 
         MockitoAnnotations.initMocks(this);
-        when(classUnderTest.insertSequenceEcritureComptable(anyString(), any(SequenceEcritureComptable.class))).thenReturn(1);
-        when(classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,1,codeJournal, year)).thenCallRealMethod();
+        doReturn(1).when(classUnderTest).insertSequenceEcritureComptable(anyString(),any());
         // WHEN
         final int result = classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,1,codeJournal, new Integer(year));
         // THEN
@@ -473,10 +511,9 @@ public class ComptabiliteManagerImplTest {
         int year = 2020;
 
         MockitoAnnotations.initMocks(this);
-        when(classUnderTest.updateSequenceEcritureComptable(anyString(), any(SequenceEcritureComptable.class))).thenReturn(1);
-        when(classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,1,codeJournal, year)).thenCallRealMethod();
+        doReturn(1).when(classUnderTest).updateSequenceEcritureComptable(anyString(),any());
         // WHEN
-        final int result = classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,1,codeJournal, new Integer(year));
+        final int result = classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,50,codeJournal, new Integer(year));
         // THEN
         assertThat(result).isEqualTo(1);
 
@@ -489,12 +526,13 @@ public class ComptabiliteManagerImplTest {
 
 
     @Test(expected = FunctionalException.class)
-    public void Given_EcritureComptableIDIsNull_When_checkEcritureComptableContextIsUsed_Then_shouldThrowFunctionnalException() throws FunctionalException {
+    public void Given_EcritureComptableIDIsNull_When_checkEcritureComptableContextIsUsed_Then_shouldThrowFunctionnalException() throws FunctionalException, NotFoundException {
         // GIVEN
         MockitoAnnotations.initMocks(this);
         when(vEcritureComptable.getReference()).thenReturn("test");
         when(vEcritureComptable.getId()).thenReturn(null);
-        doCallRealMethod().when(classUnderTest).checkEcritureComptableContext(vEcritureComptable);
+        doReturn(vEcritureComptable).when(classUnderTest).getEcritureComptableByRef(vEcritureComptable);
+        /*doCallRealMethod().when(classUnderTest).checkEcritureComptableContext(vEcritureComptable);*/
         // WHEN
         classUnderTest.checkEcritureComptableContext(vEcritureComptable);
 
@@ -508,8 +546,7 @@ public class ComptabiliteManagerImplTest {
         eCFromDb.setId(1);
         when(vEcritureComptable.getReference()).thenReturn("test");
         when(vEcritureComptable.getId()).thenReturn(2);
-        when(classUnderTest.getEcritureComptableByRef(vEcritureComptable)).thenReturn(eCFromDb);
-        doCallRealMethod().when(classUnderTest).checkEcritureComptableContext(vEcritureComptable);
+        doReturn(eCFromDb).when(classUnderTest).getEcritureComptableByRef(any());
         // WHEN
         classUnderTest.checkEcritureComptableContext(vEcritureComptable);
 
