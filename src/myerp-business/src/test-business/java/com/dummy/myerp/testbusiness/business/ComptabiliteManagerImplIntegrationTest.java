@@ -1,6 +1,5 @@
 package com.dummy.myerp.testbusiness.business;
 
-import com.dummy.myerp.business.impl.AbstractBusinessManager;
 import com.dummy.myerp.business.impl.TransactionManager;
 import com.dummy.myerp.business.impl.manager.ComptabiliteManagerImpl;
 import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
@@ -14,7 +13,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
@@ -28,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ComptabiliteManagerImplIT extends BusinessTestCase{
+public class ComptabiliteManagerImplIntegrationTest {
 
 
     @Spy
@@ -112,8 +110,9 @@ public class ComptabiliteManagerImplIT extends BusinessTestCase{
         assertThat(result).isInstanceOf(EcritureComptable.class);
     }
 
+
     @Test(expected = NotFoundException.class)
-    public void Given__When__Then2() throws NotFoundException {
+    public void Given_noRecordedInDataBaseEcritureComptable_When_getEcritureComptableByRefIsUsed_Then_shouldReturnNotFoundException() throws NotFoundException {
         // GIVEN
         when(mockComptabiliteDao.getEcritureComptableByRef(anyString())).thenThrow(NotFoundException.class);
         // WHEN
