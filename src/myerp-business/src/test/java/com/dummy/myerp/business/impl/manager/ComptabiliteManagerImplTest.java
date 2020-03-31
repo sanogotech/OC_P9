@@ -112,8 +112,35 @@ public class ComptabiliteManagerImplTest {
     }
 
 
+    /*==========================================================================*/
+    /*            checkEcritureComptable Validation unit tests                  */
+    /*==========================================================================*/
 
+    @Test
+    public void Given_validEcritureComptable_When_checkEcritureComptableIsUsed_Then_verifyMethodSequence() throws FunctionalException {
+        // GIVEN
+        MockitoAnnotations.initMocks(this);
+        doReturn(true).when(classUnderTest).checkEcritureComptableUnit(vEcritureComptable);
+        doNothing().when(classUnderTest).checkEcritureComptableContext(vEcritureComptable);
+        // WHEN
+        classUnderTest.checkEcritureComptable(vEcritureComptable);
+        // THEN
+        verify(classUnderTest, times(1)).checkEcritureComptableUnit(vEcritureComptable);
+        verify(classUnderTest, times(1)).checkEcritureComptableContext(vEcritureComptable);
+    }
 
+    @Test(expected = FunctionalException.class)
+    public void Given_invalidEcritureComptable_When_checkEcritureComptableIsUsed_Then_shouldThrowFunctionnalException() throws FunctionalException {
+        // GIVEN
+        MockitoAnnotations.initMocks(this);
+        doThrow(FunctionalException.class).when(classUnderTest).checkEcritureComptableUnit(vEcritureComptable);
+        // WHEN
+        classUnderTest.checkEcritureComptable(vEcritureComptable);
+    }
+
+    /*==========================================================================*/
+    /*            checkEcritureComptableUnit Validation unit tests              */
+    /*==========================================================================*/
 
     @Test
     public void Given_validEcritureComptable_When_checkEcritureComptableUnitIsUsed_Then_shouldReturnTrue() throws FunctionalException {

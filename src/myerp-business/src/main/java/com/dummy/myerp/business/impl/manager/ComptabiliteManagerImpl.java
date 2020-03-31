@@ -264,7 +264,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         }
     }
 
-    protected EcritureComptable getEcritureComptableByRef(EcritureComptable pEcritureComptable) throws NotFoundException{
+    public EcritureComptable getEcritureComptableByRef(EcritureComptable pEcritureComptable) throws NotFoundException{
         // Recherche d'une écriture ayant la même référence
         return getDaoProxy().getComptabiliteDao().getEcritureComptableByRef(
                 pEcritureComptable.getReference());
