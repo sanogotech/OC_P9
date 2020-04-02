@@ -558,8 +558,8 @@ public class ComptabiliteManagerImplTest {
         MockitoAnnotations.initMocks(this);
         when(vEcritureComptable.getReference()).thenReturn("test");
         when(vEcritureComptable.getId()).thenReturn(null);
-        doReturn(vEcritureComptable).when(classUnderTest).getEcritureComptableByRef(vEcritureComptable);
-        /*doCallRealMethod().when(classUnderTest).checkEcritureComptableContext(vEcritureComptable);*/
+        doReturn(vEcritureComptable).when(classUnderTest).getEcritureComptableByRef(anyString());
+
         // WHEN
         classUnderTest.checkEcritureComptableContext(vEcritureComptable);
 

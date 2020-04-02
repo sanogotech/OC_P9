@@ -27,9 +27,6 @@ public interface ComptabiliteDao {
      */
     List<JournalComptable> getListJournalComptable();
 
-
-
-
     // ==================== EcritureComptable ====================
 
     /**

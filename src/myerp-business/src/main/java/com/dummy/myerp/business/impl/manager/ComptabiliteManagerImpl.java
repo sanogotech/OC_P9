@@ -249,7 +249,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         if (StringUtils.isNoneEmpty(pEcritureComptable.getReference())) {
             try {
                 // Recherche d'une écriture ayant la même référence
-                EcritureComptable vECRef = getEcritureComptableByRef(pEcritureComptable);
+                EcritureComptable vECRef = getEcritureComptableByRef(pEcritureComptable.getReference());
 
                 // Si l'écriture à vérifier est une nouvelle écriture (id == null),
                 // ou si elle ne correspond pas à l'écriture trouvée (id != idECRef),
@@ -264,10 +264,9 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         }
     }
 
-    public EcritureComptable getEcritureComptableByRef(EcritureComptable pEcritureComptable) throws NotFoundException{
+    public EcritureComptable getEcritureComptableByRef(String reference) throws NotFoundException{
         // Recherche d'une écriture ayant la même référence
-        return getDaoProxy().getComptabiliteDao().getEcritureComptableByRef(
-                pEcritureComptable.getReference());
+        return getDaoProxy().getComptabiliteDao().getEcritureComptableByRef(reference);
         }
 
     /**
