@@ -8,7 +8,24 @@ addons:
     token:
       secure: "tHA9SPUMDmQjjrnHuC+pPkm0EPaOdeHc+5OddwXCWOtzwk+PrcKRsazaDE94U+10eiNJAaNgrCkPw11tnJtxVPnwjR23R1JtHUFQk6V2hXUcpuHcHZ8He/xLisx93vZBpTeT16FBze+aj5opY/OZwegNpkCfl3eBI2iLITtf0/nb68caGkJQKoz1K6tZYRD6xiX85Q6g6X7ZK3D7y2fo0P14GqBKYyFz7b+NhGKRll4+bcezj3Z9YSQbt6yS56OEFrw6m3jwt/CwbDqfdVriV64wYeObNgyIJ66Weca13aAMhMvBP1rjWa+lw7jgBJo19n9hP1c3URiD3u9B9auWdu5aCc7TVeu3EgRRdRMQnHVrklHXGn4rHY9Abtdyq2G8baJKt0YgbM+5Lj7M1wiofdAlcUqfb0PTtwEV7HMc2ZRUa59AbjJInmWB0+sq0Jk+qw9W66OwjZ/Tt2hHfivYDqhRVaovnLppl9Xt6CcyvjCCQq3Hf58CjwlXk2ifDmXn6Yc+mmH/sBU2BLz5iunswodqwN2qmg7yTGSYCKfPNSVknZDAJMDLjYWEyR5dLuvK390Nww08uaGHu2PNNGzSLvhe8930WBx77W7JVOwTD0FHNN9vUv5OxDN4TYZ8ySHaWNTvtlqvsJEdf7X7Pt2+BKI1RkGePqAJpamLHtCK2jw="
 
+sudo: required
+
+services: docker
+
+before_install:
+  - cd docker/dev
+  - docker-compose up -d
+  - docker ps -a
+
+before_script:
+  - cd ../../src
+
 script:
-  - cd src 
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
   - mvn clean verify sonar:sonar -Ptest-business,test-consumer -Dsonar.projectKey=ccathala_OC_P9
+  - cd ../docker/dev
+  - docker-compose stop
+  - docker-compose rm -f
+  - docker-compose up -d
+  - docker ps -a
+  - cd ../../src
