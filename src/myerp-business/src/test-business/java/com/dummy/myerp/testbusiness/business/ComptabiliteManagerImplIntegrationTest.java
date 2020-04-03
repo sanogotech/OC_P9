@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.TransactionStatus;
 
 import java.math.BigDecimal;
@@ -26,6 +27,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -162,5 +164,84 @@ public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
 
             // check beans equality
             assertThat(resultInString).isEqualTo(vEcritureComptableInString);
+    }
+
+    @Test(expected = FunctionalException.class)
+    public void Given_invalidEcritureComptable_When_insertEcritureComptableIsUsed_Then_shouldReturnFunctionnalException() throws FunctionalException, NotFoundException, ParseException {
+        // GIVEN
+
+        // Change journal code to invalid bean
+        vEcritureComptable.getJournal().setCode("VE");
+        // WHEN
+        classUnderTest.insertEcritureComptable(vEcritureComptable);
+    }
+
+    @Test
+    public void Given_ecritureComptableWithUnknowJournalCode_When_insertEcritureComptableIsUsed_Then_shouldNotInsert() throws FunctionalException, NotFoundException, ParseException {
+        // GIVEN
+        List<EcritureComptable> records = classUnderTest.getListEcritureComptable();
+
+        // Change bean to invalid it
+        vEcritureComptable.setReference("TOTO-2020/00001");
+        vEcritureComptable.getJournal().setCode("TOTO");
+
+        // WHEN
+        try {
+            classUnderTest.insertEcritureComptable(vEcritureComptable);
+        } catch (DataIntegrityViolationException e){}
+
+        // THEN
+        List<EcritureComptable> result = classUnderTest.getListEcritureComptable();
+        assertThat(result.size()).isEqualTo(records.size());
+    }
+
+    @Test
+    public void Given_modifiedBean_When_updateEcritureComptableIsUsed_Then_shouldReturnModifiedBean() throws FunctionalException, NotFoundException, ParseException {
+        // GIVEN
+        String reference = "AC-2016/00001";
+        EcritureComptable beanToUpdate = classUnderTest.getEcritureComptableByRef(reference);
+
+        EcritureComptable modifiedBeanToUpdate = new EcritureComptable();
+        modifiedBeanToUpdate.setId(beanToUpdate.getId());
+        modifiedBeanToUpdate.setJournal(beanToUpdate.getJournal());
+        modifiedBeanToUpdate.setDate(beanToUpdate.getDate());
+        modifiedBeanToUpdate.setReference(beanToUpdate.getReference());
+        modifiedBeanToUpdate.setLibelle("Ramette papier A4");
+
+        // WHEN
+        classUnderTest.updateEcritureComptable(modifiedBeanToUpdate);
+        // THEN
+        EcritureComptable result = classUnderTest.getEcritureComptableByRef(reference);
+
+        // Restore initial data
+        classUnderTest.updateEcritureComptable(beanToUpdate);
+
+        assertThat(result.toString()).isEqualTo(modifiedBeanToUpdate.toString());
+    }
+
+    @Test
+    public void Given_invalidModifiedBean_When_updateEcritureComptableIsUsed_Then_shouldModifiedNothing() throws FunctionalException, NotFoundException, ParseException {
+        // GIVEN
+        String reference = "AC-2016/00001";
+        EcritureComptable beanToUpdate = classUnderTest.getEcritureComptableByRef(reference);
+
+        EcritureComptable modifiedBeanToUpdate = new EcritureComptable();
+        modifiedBeanToUpdate.setId(beanToUpdate.getId());
+        modifiedBeanToUpdate.setJournal(new JournalComptable("TOTO","test"));
+        modifiedBeanToUpdate.setDate(beanToUpdate.getDate());
+        modifiedBeanToUpdate.setReference("TOTO-2020/00001");
+        modifiedBeanToUpdate.setLibelle("Ramette papier A4");
+
+        // WHEN
+        try {
+            classUnderTest.updateEcritureComptable(modifiedBeanToUpdate);
+        } catch (DataIntegrityViolationException e){
+
+        }
+
+        // THEN
+        EcritureComptable result = classUnderTest.getEcritureComptableByRef(reference);
+
+        assertThat(result.toString()).isEqualTo(beanToUpdate.toString());
     }
 }

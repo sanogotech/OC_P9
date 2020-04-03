@@ -108,4 +108,6 @@ public class ComptabiliteDaoImplIntegrationTest extends ConsumerTestCase {
             assertThat(resultInString).isEqualTo(vEcritureComptableInString);
     }
 
+
+
 }

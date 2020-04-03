@@ -75,6 +75,7 @@ public class EcritureComptable {
         return listLigneEcriture;
     }
 
+
     /**
      * Calcul et renvoie le total des montants au débit des lignes d'écriture
      *
