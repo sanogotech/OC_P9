@@ -98,14 +98,14 @@ public class ComptabiliteManagerImplTest {
         MockitoAnnotations.initMocks(this);
         when(vEcritureComptable.getJournal()).thenReturn(vJournalComptable);
         when(vJournalComptable.getCode()).thenReturn("ABC");
-        doReturn(5).when(classUnderTest).getSequenceEcritureComptableLastValue(anyString(), anyString());
+        doReturn(5).when(classUnderTest).getSequenceEcritureComptableLastValue(anyString(), anyInt());
         doReturn(6).when(classUnderTest).setSequenceEcritureComptableUpdatedValue(anyInt());
         doNothing().when(vEcritureComptable).setReference(anyString());
-        doReturn(1).when(classUnderTest).persistSequenceEcritureComptableValue(anyInt(), anyInt(),anyString(), any(Integer.class));
+        doReturn(true).when(classUnderTest).persistSequenceEcritureComptableValue(anyInt(), anyInt(),anyString(), any(Integer.class));
         // WHEN
         classUnderTest.addReference(vEcritureComptable);
         // THEN
-        verify(classUnderTest, times(1)).getSequenceEcritureComptableLastValue(anyString(), anyString());
+        verify(classUnderTest, times(1)).getSequenceEcritureComptableLastValue(anyString(), anyInt());
         verify(classUnderTest, times(1)).setSequenceEcritureComptableUpdatedValue(anyInt());
         verify(classUnderTest, times(1)).persistSequenceEcritureComptableValue(anyInt(), anyInt(), anyString(),anyInt());
         verify(vEcritureComptable, times(1)).setReference(anyString());
@@ -522,11 +522,11 @@ public class ComptabiliteManagerImplTest {
         int year = 2020;
 
         MockitoAnnotations.initMocks(this);
-        doReturn(1).when(classUnderTest).insertSequenceEcritureComptable(anyString(),any());
+        doNothing().when(classUnderTest).insertSequenceEcritureComptable(anyString(),any());
         // WHEN
-        final int result = classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,1,codeJournal, new Integer(year));
+        final Boolean result = classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,1,codeJournal, new Integer(year));
         // THEN
-        assertThat(result).isEqualTo(1);
+        assertThat(result).isTrue();
 
     }
 
@@ -538,11 +538,11 @@ public class ComptabiliteManagerImplTest {
         int year = 2020;
 
         MockitoAnnotations.initMocks(this);
-        doReturn(1).when(classUnderTest).updateSequenceEcritureComptable(anyString(),any());
+        doNothing().when(classUnderTest).updateSequenceEcritureComptable(anyString(),any());
         // WHEN
-        final int result = classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,50,codeJournal, new Integer(year));
+        final Boolean result = classUnderTest.persistSequenceEcritureComptableValue(sequenceValue,50,codeJournal, new Integer(year));
         // THEN
-        assertThat(result).isEqualTo(1);
+        assertThat(result).isTrue();
 
     }
 

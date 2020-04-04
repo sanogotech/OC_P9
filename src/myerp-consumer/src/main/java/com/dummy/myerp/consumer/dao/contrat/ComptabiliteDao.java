@@ -89,9 +89,11 @@ public interface ComptabiliteDao {
      *
      * @return {@link int}
      */
-    int getSequenceEcritureComptableLastValue(String codeJournal, String year);
+    int getSequenceEcritureComptableLastValue(String codeJournal, Integer year);
 
-    int insertSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
+    void insertSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
 
-    int updateSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
+    void updateSequenceEcritureComptable(String codeJournal, SequenceEcritureComptable pSequenceEcritureComptable);
+
+    void deleteSequenceEcritureComptable(String codeJournal, Integer year);
 }

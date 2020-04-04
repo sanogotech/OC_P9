@@ -274,19 +274,12 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     @Override
-    public int getSequenceEcritureComptableLastValue(String codeJournal, String year) {
+    public int getSequenceEcritureComptableLastValue(String codeJournal, Integer year) {
         NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("journal_code", codeJournal);
         vSqlParams.addValue("annee", year);
-        int SequenceEcritureComptableLastValue = 0;
-        try{
-            SequenceEcritureComptableLastValue = vJdbcTemplate.queryForObject(SQLgetSequenceEcritureComptableLastValue, vSqlParams, Integer.class);
-        }catch (EmptyResultDataAccessException e){
-
-        }
-
-        return SequenceEcritureComptableLastValue;
+        return vJdbcTemplate.queryForObject(SQLgetSequenceEcritureComptableLastValue, vSqlParams, Integer.class);
     }
 
     // ==================== SequenceEcritureComptable - Insert ====================
@@ -298,19 +291,13 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     @Override
-    public int insertSequenceEcritureComptable(String codeJournal , SequenceEcritureComptable pSequenceEcritureComptable) {
+    public void insertSequenceEcritureComptable(String codeJournal , SequenceEcritureComptable pSequenceEcritureComptable) {
         NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("journal_code", codeJournal);
         vSqlParams.addValue("annee", pSequenceEcritureComptable.getAnnee());
         vSqlParams.addValue("derniere_valeur", pSequenceEcritureComptable.getDerniereValeur());
-
-        try{
-            return vJdbcTemplate.update(SQLinsertSequenceEcritureComptable, vSqlParams);
-        } catch (DataAccessException e){
-            return 0;
-        }
-
+        vJdbcTemplate.update(SQLinsertSequenceEcritureComptable, vSqlParams);
     }
 
     // ==================== SequenceEcritureComptable - Update ====================
@@ -322,18 +309,30 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     @Override
-    public int updateSequenceEcritureComptable(String codeJournal , SequenceEcritureComptable pSequenceEcritureComptable) {
+    public void updateSequenceEcritureComptable(String codeJournal , SequenceEcritureComptable pSequenceEcritureComptable) {
         NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("journal_code", codeJournal);
         vSqlParams.addValue("annee", pSequenceEcritureComptable.getAnnee());
         vSqlParams.addValue("derniere_valeur", pSequenceEcritureComptable.getDerniereValeur());
-        try{
-            return vJdbcTemplate.update(SQLupdateSequenceEcritureComptable, vSqlParams);
-        } catch (DataAccessException e){
-            return 0;
-        }
+        vJdbcTemplate.update(SQLupdateSequenceEcritureComptable, vSqlParams);
 
+
+    }
+
+    /** SQLupdateSequenceEcritureComptable */
+    private static String SQLdeleteSequenceEcritureComptable;
+    public void setSQLdeleteSequenceEcritureComptable(String pSQLdeleteSequenceEcritureComptable) {
+        SQLdeleteSequenceEcritureComptable = pSQLdeleteSequenceEcritureComptable;
+    }
+
+    @Override
+    public void deleteSequenceEcritureComptable(String codeJournal, Integer year) {
+        NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
+        MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
+        vSqlParams.addValue("journal_code", codeJournal);
+        vSqlParams.addValue("annee", year);
+        vJdbcTemplate.update(SQLdeleteSequenceEcritureComptable, vSqlParams);
     }
 
 

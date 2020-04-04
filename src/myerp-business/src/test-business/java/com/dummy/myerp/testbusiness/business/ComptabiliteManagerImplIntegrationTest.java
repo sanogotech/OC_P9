@@ -1,26 +1,16 @@
 package com.dummy.myerp.testbusiness.business;
 
-import com.dummy.myerp.business.impl.TransactionManager;
 import com.dummy.myerp.business.impl.manager.ComptabiliteManagerImpl;
-import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
-import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
-import com.dummy.myerp.consumer.db.DataSourcesEnum;
-import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
-import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
-import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
-import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
+import com.dummy.myerp.model.bean.comptabilite.*;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.transaction.TransactionStatus;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -30,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
@@ -195,6 +184,10 @@ public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
         assertThat(result.size()).isEqualTo(records.size());
     }
 
+    /*==========================================================================*/
+    /*             updateEcritureComptable Integration tests                    */
+    /*==========================================================================*/
+
     @Test
     public void Given_modifiedBean_When_updateEcritureComptableIsUsed_Then_shouldReturnModifiedBean() throws FunctionalException, NotFoundException, ParseException {
         // GIVEN
@@ -243,5 +236,140 @@ public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
         EcritureComptable result = classUnderTest.getEcritureComptableByRef(reference);
 
         assertThat(result.toString()).isEqualTo(beanToUpdate.toString());
+    }
+
+    /*==========================================================================*/
+    /*             deleteEcritureComptable Integration tests                    */
+    /*==========================================================================*/
+
+    @Test(expected = NotFoundException.class)
+    public void Given_addedEcritureComptableWithid_When_deleteEcritureComptableIsUsed_Then_beanAddedShouldBeDeleted() throws FunctionalException, NotFoundException {
+        // GIVEN
+        classUnderTest.insertEcritureComptable(vEcritureComptable);
+        EcritureComptable beanAdded = classUnderTest.getEcritureComptableByRef(vEcritureComptable.getReference());
+        // WHEN
+        classUnderTest.deleteEcritureComptable(beanAdded.getId());
+        // THEN
+        classUnderTest.getEcritureComptableByRef(vEcritureComptable.getReference());
+    }
+
+    @Test
+    public void Given_wrongRecordId_When_deleteEcritureComptableIsUsed_Then_shouldDeleteNothing() {
+        // GIVEN
+        List<EcritureComptable> records = classUnderTest.getListEcritureComptable();
+        // WHEN
+        classUnderTest.deleteEcritureComptable(100);
+        // THEN
+        List<EcritureComptable> recordsAfterDelete = classUnderTest.getListEcritureComptable();
+        assertThat(records.size()).isEqualTo(recordsAfterDelete.size());
+    }
+
+    /*==========================================================================*/
+    /*        getSequenceEcritureComptableLastValue Integration tests           */
+    /*==========================================================================*/
+
+    @Test
+    public void Given_codeJournalAndYear_When_getSequenceEcritureComptableLastValueIsUsed_Then_shouldReturn40() {
+        // GIVEN
+        String codeJournal ="AC";
+        Integer year = 2016;
+        // WHEN
+        final Integer result = classUnderTest.getSequenceEcritureComptableLastValue(codeJournal, year);
+        // THEN
+        assertThat(result).isEqualTo(40);
+    }
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void Given_codeJournalAndInvaliYear_When_getSequenceEcritureComptableLastValueIsUsed_Then_shouldThrowEmptyResultDataAccessException() {
+        // GIVEN
+        String codeJournal ="AC";
+        Integer year = 1900;
+        // WHEN
+        classUnderTest.getSequenceEcritureComptableLastValue(codeJournal, year);
+
+
+    }
+
+    /*==========================================================================*/
+    /*      insertSequenceEcritureComptableLastValue Integration tests          */
+    /*==========================================================================*/
+
+    @Test
+    public void Given_validCodeJournalAndSequence_When_insertSequenceEcritureComptableIsUsed_Then_shouldBeanSequenceValue() {
+        // GIVEN
+        String codeJournal = "AC";
+        SequenceEcritureComptable sequenceToAdd = new SequenceEcritureComptable();
+        sequenceToAdd.setAnnee(2020);
+        sequenceToAdd.setDerniereValeur(1);
+        // WHEN
+        classUnderTest.insertSequenceEcritureComptable(codeJournal, sequenceToAdd);
+        // THEN
+        final int result = classUnderTest.getSequenceEcritureComptableLastValue(codeJournal, sequenceToAdd.getAnnee());
+        classUnderTest.deleteSequenceEcritureComptable(codeJournal, sequenceToAdd.getAnnee());
+        assertThat(result).isEqualTo(sequenceToAdd.getDerniereValeur());
+    }
+
+    @Test(expected = DataIntegrityViolationException.class)
+    public void Given_invalidCodeJournal_When_insertSequenceEcritureComptableIsUsed_Then_shouldThrowDataIntegrityException() {
+        // GIVEN
+        String codeJournal = "ZZ";
+        SequenceEcritureComptable sequenceToAdd = new SequenceEcritureComptable();
+        sequenceToAdd.setAnnee(2020);
+        sequenceToAdd.setDerniereValeur(1);
+        // WHEN
+        classUnderTest.insertSequenceEcritureComptable(codeJournal, sequenceToAdd);
+    }
+
+    /*==========================================================================*/
+    /*      updateSequenceEcritureComptableLastValue Integration tests          */
+    /*==========================================================================*/
+
+    @Test
+    public void Given_actualSequenceValueIs40_When_updateSequenceEcritureComptableIsUesd_Then_valueShouldBe41() {
+        // GIVEN
+        String codeJournal = "AC";
+        Integer year = 2016;
+        int actualValue = classUnderTest.getSequenceEcritureComptableLastValue(codeJournal, year);
+        // WHEN
+        classUnderTest.updateSequenceEcritureComptable(codeJournal, new SequenceEcritureComptable(year, actualValue + 1));
+        // THEN
+        final int result = classUnderTest.getSequenceEcritureComptableLastValue(codeJournal, year);
+        classUnderTest.updateSequenceEcritureComptable(codeJournal, new SequenceEcritureComptable(year, actualValue));
+        assertThat(result).isEqualTo(actualValue+1);
+    }
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void Given_wrongCodeJournal_When_updateSequenceEcritureComptableIsUsed_Then_shouldThrowEmptyResultDataAccessException() {
+        // GIVEN
+        String codeJournal = "ZZ";
+        Integer year = 2016;
+        int actualValue = classUnderTest.getSequenceEcritureComptableLastValue(codeJournal, year);
+        // WHEN
+        classUnderTest.updateSequenceEcritureComptable(codeJournal, new SequenceEcritureComptable(year, actualValue + 1));
+    }
+
+    /*==========================================================================*/
+    /*      deleteSequenceEcritureComptableLastValue Integration tests          */
+    /*==========================================================================*/
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void Given_insertNewSequence_When_deleteSequenceEcritureComptableIsUsed_Then_newSequenceShouldBeDelete() {
+        // GIVEN
+        String codeJournal = "AC";
+        Integer year = 2020;
+        classUnderTest.insertSequenceEcritureComptable(codeJournal, new SequenceEcritureComptable(year, 1));
+        // WHEN
+        classUnderTest.deleteSequenceEcritureComptable(codeJournal,year);
+        // THEN
+        classUnderTest.getSequenceEcritureComptableLastValue(codeJournal, year);
+    }
+
+    @Test
+    public void Given_wrongSequence_When_deleteSequenceEcritureComptableIsUsed_Then_shouldThrowEmptyResultDataAccessException() {
+        // GIVEN
+        String codeJournal = "ZZ";
+        Integer year = 2020;
+        // WHEN
+        classUnderTest.deleteSequenceEcritureComptable(codeJournal,year);
     }
 }
