@@ -364,12 +364,4 @@ public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
         classUnderTest.getSequenceEcritureComptableLastValue(codeJournal, year);
     }
 
-    @Test
-    public void Given_wrongSequence_When_deleteSequenceEcritureComptableIsUsed_Then_shouldThrowEmptyResultDataAccessException() {
-        // GIVEN
-        String codeJournal = "ZZ";
-        Integer year = 2020;
-        // WHEN
-        classUnderTest.deleteSequenceEcritureComptable(codeJournal,year);
-    }
 }
