@@ -1,13 +1,11 @@
 package com.dummy.myerp.testconsumer.consumer;
 
 import com.dummy.myerp.consumer.dao.impl.db.dao.ComptabiliteDaoImpl;
-import com.dummy.myerp.consumer.db.DataSourcesEnum;
 import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
 import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
 import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
 import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.NotFoundException;
-import org.assertj.core.api.ObjectAssert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,9 +15,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
-
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class ComptabiliteDaoImplIntegrationTest extends ConsumerTestCase {
@@ -76,6 +74,111 @@ public class ComptabiliteDaoImplIntegrationTest extends ConsumerTestCase {
         return formatedDate;
     }
 
+    /*==========================================================================*/
+    /*             getListEcritureComptable Integration tests                   */
+    /*==========================================================================*/
+
+    @Test
+    public void Given__numberOfEcritureComptableRecordedWhen_getListEcritureComptableIsUsed_Then_shouldReturnCorrectNumberOfRecords() throws NotFoundException {
+        // GIVEN
+        List<EcritureComptable> initialList = classUnderTest.getListEcritureComptable();
+        classUnderTest.insertEcritureComptable(vEcritureComptable);
+        // WHEN
+        List<EcritureComptable> result = classUnderTest.getListEcritureComptable();
+        // THEN
+        EcritureComptable ecritureAdded= classUnderTest.getEcritureComptableByRef("AC-2020/00001");
+        classUnderTest.deleteEcritureComptable(ecritureAdded.getId());
+        assertThat(result.size()).isEqualTo(initialList.size() +1);
+
+    }
+
+    @Test
+    public void Given__When_getListEcritureComptableIsUsed_Then_shouldReturnAList() {
+        // GIVEN
+
+        // WHEN
+        List<EcritureComptable> result = classUnderTest.getListEcritureComptable();
+        // THEN
+        assertThat(result).isInstanceOf(List.class);
+
+    }
+
+    @Test
+    public void Given__When_getListEcritureComptableIsUsed_Then_shouldReturnAListOfEcritureComptable() {
+        // GIVEN
+
+        // WHEN
+        List<EcritureComptable> result = classUnderTest.getListEcritureComptable();
+        // THEN
+        assertThat(result.get(0)).isInstanceOf(EcritureComptable.class);
+
+    }
+
+    /*==========================================================================*/
+    /*              getEcritureComptable Integration tests                      */
+    /*==========================================================================*/
+
+    @Test
+    public void Given_idInDataBase_When_getEcritureComptableIsUsed_Then_shouldReturnMatchingBean() throws NotFoundException {
+        // GIVEN
+        classUnderTest.insertEcritureComptable(vEcritureComptable);
+        EcritureComptable ecritureAdded = classUnderTest.getEcritureComptableByRef(vEcritureComptable.getReference());
+        // WHEN
+        EcritureComptable result = classUnderTest.getEcritureComptable(ecritureAdded.getId());
+        // THEN
+        classUnderTest.deleteEcritureComptable(ecritureAdded.getId());
+        String ecritureAddedToString = ecritureAdded.toString();
+        String resultToString = result.toString();
+        assertThat(resultToString).isEqualTo(ecritureAddedToString);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void Given_wrongId_When_getEcritureComptableIsUsed_Then_shouldThrowsNotFoundException() throws NotFoundException {
+
+        // WHEN
+        classUnderTest.getEcritureComptable(100);
+    }
+
+    @Test
+    public void Given_wrongId_When_getEcritureComptableIsUsed_Then_shouldReturnTheCorrectExceptionMessage() {
+        // GIVEN
+        int wrongId = 100;
+        String messageExpected = "EcritureComptable non trouvée : id=" + wrongId;
+        String result = "";
+        // WHEN
+        try {
+            classUnderTest.getEcritureComptable(wrongId);
+        } catch (NotFoundException e) {
+            result = e.getLocalizedMessage();
+        }
+        // THEN
+        assertThat(result).isEqualTo(messageExpected);
+    }
+
+    /*==========================================================================*/
+    /*           getEcritureComptableByRef Integration tests                    */
+    /*==========================================================================*/
+
+    @Test(expected = NotFoundException.class)
+    public void Given_wrongReference_When_getEcritureComptableByRefIsUsed_Then_ThrowNotFoundException() throws NotFoundException {
+        // WHEN
+        classUnderTest.getEcritureComptableByRef(vEcritureComptable.getReference());
+    }
+
+    @Test
+    public void Given_wrongReference_When_getEcritureComptableByRefIsUsed_Then_shouldReturnCorrectExceptionMessage() {
+        // GIVEN
+        String messageExpected = "EcritureComptable non trouvée : reference=" + vEcritureComptable.getReference();
+        String result = "";
+        // WHEN
+        try {
+            classUnderTest.getEcritureComptableByRef(vEcritureComptable.getReference());
+        } catch (NotFoundException e) {
+            result = e.getLocalizedMessage();
+        }
+        // THEN
+        assertThat(result).isEqualTo(messageExpected);
+    }
 
 
     /*==========================================================================*/
@@ -108,6 +211,31 @@ public class ComptabiliteDaoImplIntegrationTest extends ConsumerTestCase {
             assertThat(resultInString).isEqualTo(vEcritureComptableInString);
     }
 
+    /*==========================================================================*/
+    /*             UpdateEcritureComptable Integration tests                    */
+    /*==========================================================================*/
 
+    @Test
+    public void Given__When__Then() throws NotFoundException {
+        // GIVEN
+        String reference = "AC-2016/00001";
+        EcritureComptable beanToUpdate = classUnderTest.getEcritureComptableByRef(reference);
 
+        EcritureComptable modifiedBeanToUpdate = new EcritureComptable();
+        modifiedBeanToUpdate.setId(beanToUpdate.getId());
+        modifiedBeanToUpdate.setJournal(beanToUpdate.getJournal());
+        modifiedBeanToUpdate.setDate(beanToUpdate.getDate());
+        modifiedBeanToUpdate.setReference(beanToUpdate.getReference());
+        modifiedBeanToUpdate.setLibelle("Ramette papier A4");
+
+        // WHEN
+        classUnderTest.updateEcritureComptable(modifiedBeanToUpdate);
+        // THEN
+        EcritureComptable result = classUnderTest.getEcritureComptableByRef(reference);
+
+        // Restore initial data
+        classUnderTest.updateEcritureComptable(beanToUpdate);
+
+        assertThat(result.toString()).isEqualTo(modifiedBeanToUpdate.toString());
+    }
 }
