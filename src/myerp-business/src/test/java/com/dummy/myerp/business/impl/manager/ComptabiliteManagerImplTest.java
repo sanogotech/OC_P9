@@ -1,31 +1,26 @@
 package com.dummy.myerp.business.impl.manager;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
+import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
+import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
+import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
+import com.dummy.myerp.technical.exception.FunctionalException;
+import com.dummy.myerp.technical.exception.NotFoundException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.dummy.myerp.business.impl.AbstractBusinessManager;
-import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
-import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
-import com.dummy.myerp.consumer.dao.impl.DaoProxyImpl;
-import com.dummy.myerp.model.bean.comptabilite.*;
-import com.dummy.myerp.technical.exception.NotFoundException;
-import org.assertj.core.api.Assertions;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import com.dummy.myerp.technical.exception.FunctionalException;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ComptabiliteManagerImplTest {
@@ -571,12 +566,26 @@ public class ComptabiliteManagerImplTest {
         MockitoAnnotations.initMocks(this);
         EcritureComptable eCFromDb = new EcritureComptable();
         eCFromDb.setId(1);
-        when(vEcritureComptable.getReference()).thenReturn("test");
-        when(vEcritureComptable.getId()).thenReturn(2);
+        doCallRealMethod().when(vEcritureComptable).setReference(anyString());
+        doCallRealMethod().when(vEcritureComptable).setId(anyInt());
+        when(vEcritureComptable.getReference()).thenCallRealMethod();
+        when(vEcritureComptable.getId()).thenCallRealMethod();
+        vEcritureComptable.setId(2);
+        vEcritureComptable.setReference("test");
         doReturn(eCFromDb).when(classUnderTest).getEcritureComptableByRef(any());
         // WHEN
         classUnderTest.checkEcritureComptableContext(vEcritureComptable);
 
     }
 
+    @Test
+    public void Given_emptyReference_When_checkEcritureComptableContextIsUSed_Then_shouldEscapeIf() throws FunctionalException, NotFoundException {
+        // GIVEN
+        MockitoAnnotations.initMocks(this);
+        when(vEcritureComptable.getReference()).thenReturn("");
+        // WHEN
+        classUnderTest.checkEcritureComptableContext(vEcritureComptable);
+        // THEN
+        verify(classUnderTest,times(0)).getEcritureComptableByRef(anyString());
+    }
 }

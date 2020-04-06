@@ -364,4 +364,9 @@ public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
         classUnderTest.getSequenceEcritureComptableLastValue(codeJournal, year);
     }
 
+    /*==========================================================================*/
+    /*              checkEcritureComptableContext unit tests                    */
+    /*==========================================================================*/
+
+
 }
