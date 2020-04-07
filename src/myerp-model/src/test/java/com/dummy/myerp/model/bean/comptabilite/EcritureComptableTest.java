@@ -190,7 +190,7 @@ public class EcritureComptableTest {
         // GIVEN
         classUnderTest.setId(1);
         classUnderTest.setReference("AC-2016/00001");
-        classUnderTest.setDate(new Date(2016-04-07));
+        classUnderTest.setDate(null);
         classUnderTest.setJournal(new JournalComptable("AC", "Achats"));
         classUnderTest.setLibelle("Achats");
         classUnderTest.getListLigneEcriture()
@@ -198,7 +198,7 @@ public class EcritureComptableTest {
         classUnderTest.getListLigneEcriture()
                 .add(new LigneEcritureComptable(new CompteComptable(401, "Fournisseurs"), "tutu", null, new BigDecimal(100)));
 
-        String expected = "EcritureComptable{id=1, journal=JournalComptable{code='AC', libelle='Achats'}, reference='AC-2016/00001', date=Thu Jan 01 01:00:02 CET 1970, libelle='Achats', totalDebit=100, totalCredit=100, listLigneEcriture=[\n" +
+        String expected = "EcritureComptable{id=1, journal=JournalComptable{code='AC', libelle='Achats'}, reference='AC-2016/00001', date=null, libelle='Achats', totalDebit=100, totalCredit=100, listLigneEcriture=[\n" +
                 "LigneEcritureComptable{compteComptable=CompteComptable{numero=401, libelle='Fournisseurs'}, libelle='toto', debit=100, credit=null}\n" +
                 "LigneEcritureComptable{compteComptable=CompteComptable{numero=401, libelle='Fournisseurs'}, libelle='tutu', debit=null, credit=100}\n" +
                 "]}";
