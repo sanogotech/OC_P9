@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
@@ -182,5 +183,28 @@ public class EcritureComptableTest {
 
         // THEN
         assertThat(result).isFalse();
+    }
+
+    @Test
+    public void Given_beanEcritureComptable_When_toStringIsUsed_Then_shouldBeEqual() {
+        // GIVEN
+        classUnderTest.setId(1);
+        classUnderTest.setReference("AC-2016/00001");
+        classUnderTest.setDate(new Date(2016-04-07));
+        classUnderTest.setJournal(new JournalComptable("AC", "Achats"));
+        classUnderTest.setLibelle("Achats");
+        classUnderTest.getListLigneEcriture()
+                .add(new LigneEcritureComptable(new CompteComptable(401, "Fournisseurs"), "toto", new BigDecimal(100), null));
+        classUnderTest.getListLigneEcriture()
+                .add(new LigneEcritureComptable(new CompteComptable(401, "Fournisseurs"), "tutu", null, new BigDecimal(100)));
+
+        String expected = "EcritureComptable{id=1, journal=JournalComptable{code='AC', libelle='Achats'}, reference='AC-2016/00001', date=Thu Jan 01 01:00:02 CET 1970, libelle='Achats', totalDebit=100, totalCredit=100, listLigneEcriture=[\n" +
+                "LigneEcritureComptable{compteComptable=CompteComptable{numero=401, libelle='Fournisseurs'}, libelle='toto', debit=100, credit=null}\n" +
+                "LigneEcritureComptable{compteComptable=CompteComptable{numero=401, libelle='Fournisseurs'}, libelle='tutu', debit=null, credit=100}\n" +
+                "]}";
+        // WHEN
+        final String  result = classUnderTest.toString();
+        // THEN
+        assertThat(result).isEqualTo(expected);
     }
 }
