@@ -25,16 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
 
 
-   /* @Spy*/
+
     ComptabiliteManagerImpl classUnderTest;
-    /*@Spy*/
     EcritureComptable vEcritureComptable;
-    /*@Spy
-    DaoProxy mockDaoProxy;
-    @Spy
-    TransactionManager mockTransactionManager;
-    @Spy
-    ComptabiliteDao mockComptabiliteDao;*/
 
     int year =0;
     String yearInString = null;
@@ -189,10 +182,10 @@ public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
     /*==========================================================================*/
 
     @Test
-    public void Given_modifiedBean_When_updateEcritureComptableIsUsed_Then_shouldReturnModifiedBean() throws FunctionalException, NotFoundException, ParseException {
+    public void Given_modifiedBean_When_updateEcritureComptableIsUsed_Then_shouldReturnModifiedBean() throws FunctionalException, NotFoundException {
         // GIVEN
-        String reference = "AC-2016/00001";
-        EcritureComptable beanToUpdate = classUnderTest.getEcritureComptableByRef(reference);
+        classUnderTest.insertEcritureComptable(vEcritureComptable);
+        EcritureComptable beanToUpdate = classUnderTest.getEcritureComptableByRef(vEcritureComptable.getReference());
 
         EcritureComptable modifiedBeanToUpdate = new EcritureComptable();
         modifiedBeanToUpdate.setId(beanToUpdate.getId());
@@ -200,42 +193,28 @@ public class ComptabiliteManagerImplIntegrationTest extends BusinessTestCase {
         modifiedBeanToUpdate.setDate(beanToUpdate.getDate());
         modifiedBeanToUpdate.setReference(beanToUpdate.getReference());
         modifiedBeanToUpdate.setLibelle("Ramette papier A4");
+        modifiedBeanToUpdate.getListLigneEcriture().addAll(beanToUpdate.getListLigneEcriture());
 
         // WHEN
         classUnderTest.updateEcritureComptable(modifiedBeanToUpdate);
         // THEN
-        EcritureComptable result = classUnderTest.getEcritureComptableByRef(reference);
+        EcritureComptable result = classUnderTest.getEcritureComptableByRef(vEcritureComptable.getReference());
 
         // Restore initial data
-        classUnderTest.updateEcritureComptable(beanToUpdate);
+        classUnderTest.deleteEcritureComptable(vEcritureComptable.getId());
 
         assertThat(result.toString()).isEqualTo(modifiedBeanToUpdate.toString());
     }
 
-    @Test
-    public void Given_invalidModifiedBean_When_updateEcritureComptableIsUsed_Then_shouldModifiedNothing() throws FunctionalException, NotFoundException, ParseException {
+    @Test(expected = FunctionalException.class)
+    public void Given_invalidEcritureComptable_When_updateEcritureComptableIsUsed_Then_shouldReturnFunctionnalException() throws FunctionalException {
         // GIVEN
-        String reference = "AC-2016/00001";
-        EcritureComptable beanToUpdate = classUnderTest.getEcritureComptableByRef(reference);
 
-        EcritureComptable modifiedBeanToUpdate = new EcritureComptable();
-        modifiedBeanToUpdate.setId(beanToUpdate.getId());
-        modifiedBeanToUpdate.setJournal(new JournalComptable("TOTO","test"));
-        modifiedBeanToUpdate.setDate(beanToUpdate.getDate());
-        modifiedBeanToUpdate.setReference("TOTO-2020/00001");
-        modifiedBeanToUpdate.setLibelle("Ramette papier A4");
-
+        // Change journal code to invalid bean
+        vEcritureComptable.getJournal().setCode("VE");
         // WHEN
-        try {
-            classUnderTest.updateEcritureComptable(modifiedBeanToUpdate);
-        } catch (DataIntegrityViolationException e){
+        classUnderTest.updateEcritureComptable(vEcritureComptable);
 
-        }
-
-        // THEN
-        EcritureComptable result = classUnderTest.getEcritureComptableByRef(reference);
-
-        assertThat(result.toString()).isEqualTo(beanToUpdate.toString());
     }
 
     /*==========================================================================*/
