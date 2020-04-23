@@ -7,7 +7,7 @@
 
 ## Test Junit Spring code with  application context bean xml  and @Autowired
 
- ` ` `java
+```java
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/services-test-config.xml"})
 public class MySericeTest implements ApplicationContextAware
@@ -26,8 +26,7 @@ public class MySericeTest implements ApplicationContextAware
         HelloWorld hw = (HelloWorld) appContext.getBean("helloWorld");
     }
 }
-
- ` ` `
+```
 
 ## Organisation du répertoire
 
