@@ -1,5 +1,33 @@
 # MyERP
 
+## Urls
+- https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/testing.html
+- https://stackoverflow.com/questions/2425015/how-to-access-spring-context-in-junit-tests-annotated-with-runwith-and-context
+- https://javapapers.com/spring/spring-applicationcontext/
+
+## Test Junit Spring code with  application context bean xml  and @Autowired
+
+ ` ` `java
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"/services-test-config.xml"})
+public class MySericeTest implements ApplicationContextAware
+{
+  // Injection method 1
+  @Autowired
+  MyService service;
+...
+    @Override
+    public void setApplicationContext(ApplicationContext context)
+            throws BeansException
+    {
+         //Inject method 2
+        // Do something with the context here
+        HelloWorld hw = (HelloWorld) appContext.getBean("helloWorld");
+    }
+}
+
+ ` ` `
+
 ## Organisation du répertoire
 
 *   `doc` : documentation
