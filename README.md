@@ -15,7 +15,8 @@ public class MySericeTest implements ApplicationContextAware
   // Injection method 1
   @Autowired
   MyService service;
-...
+
+   //Overrride  AppplicationContextAware Method
     @Override
     public void setApplicationContext(ApplicationContext context)
             throws BeansException
